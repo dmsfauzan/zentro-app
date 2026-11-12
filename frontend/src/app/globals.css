@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+/*
+  Palet brand ZENTRO diambil dari logo resmi:
+  - brand blue  : #0875E2 (gradien mark hingga #0283FA)
+  - brand deep  : #0062D1
+  - navy        : #052440 (wordmark)
+  - surface     : #F6F7F6 (latar logo)
+*/
+:root {
+  --background: #f6f7f6;
+  --foreground: #052440;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-paper: #f6f7f6;
+  --color-canvas: #ffffff;
+  --color-ink: #052440;
+  --color-ink-muted: #4a5c6b;
+  --color-ink-subtle: #6e7c87;
+  --color-line: #e3e7e6;
+  --color-line-strong: #cbd3d1;
+
+  --color-brand: #0875e2;
+  --color-brand-strong: #0062d1;
+  --color-brand-soft: #e9f2fd;
+
+  --color-success: #0f7b57;
+  --color-success-soft: #e7f4ee;
+  --color-warning: #a86400;
+  --color-warning-soft: #fbf1e2;
+  --color-danger: #b42318;
+  --color-danger-soft: #fbeae8;
+  --color-info: #0b6bb3;
+  --color-info-soft: #e8f1f8;
+  --color-rating: #e8a400;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+
+  --shadow-e1: 0 1px 2px rgba(5, 36, 64, 0.06);
+  --shadow-e2: 0 16px 40px rgba(5, 36, 64, 0.14);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-anton);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-line);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--color-brand-soft);
+    color: var(--color-ink);
+  }
+}
+
+@layer utilities {
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .container-page {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 1280px;
+    padding-inline: 20px;
+  }
+
+  @media (min-width: 1024px) {
+    .container-page {
+      padding-inline: 32px;
+    }
+  }
+
+  .container-editorial {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 1120px;
+    padding-inline: 20px;
+  }
+
+  @media (min-width: 1024px) {
+    .container-editorial {
+      padding-inline: 32px;
+    }
+  }
+}
+
+/* Cetak nota/invoice: sembunyikan kerangka situs, sisakan dokumen. */
+@media print {
+  header,
+  footer,
+  .print-hide {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff;
+  }
+
+  .print-plain {
+    border: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+}

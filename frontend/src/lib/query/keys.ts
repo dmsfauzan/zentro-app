@@ -1,0 +1,54 @@
+/**
+ * Kunci query TanStack Query (satu tempat).
+ */
+export type Filters = Record<string, string | number | boolean | undefined>;
+
+export const qk = {
+  me: ["me"] as const,
+  notifications: ["notifications"] as const,
+  notificationsList: (filters: Filters) => ["notifications", filters] as const,
+  notification: (id: string) => ["notification", id] as const,
+  productReviews: (slug: string, page: number) => ["product-reviews", slug, page] as const,
+  addresses: ["addresses"] as const,
+  categories: ["categories"] as const,
+  products: (filters: Filters) => ["products", filters] as const,
+  product: (slug: string) => ["product", slug] as const,
+  cart: ["cart"] as const,
+  checkoutPreview: (key: string) => ["checkout-preview", key] as const,
+  orders: (filters: Filters) => ["orders", filters] as const,
+  order: (orderNumber: string) => ["order", orderNumber] as const,
+  invoice: (orderNumber: string) => ["invoice", orderNumber] as const,
+  payment: (orderNumber: string) => ["payment", orderNumber] as const,
+  shippingQuotes: (query: Filters) => ["shipping-quotes", query] as const,
+  tracking: (shipmentId: number) => ["tracking", shipmentId] as const,
+  seller: {
+    dashboard: ["seller", "dashboard"] as const,
+    products: (filters: Filters) => ["seller", "products", filters] as const,
+    product: (id: number) => ["seller", "product", id] as const,
+    orders: (filters: Filters) => ["seller", "orders", filters] as const,
+    order: (id: number) => ["seller", "order", id] as const,
+    shipments: (filters: Filters) => ["seller", "shipments", filters] as const,
+    commissions: (filters: Filters) => ["seller", "commissions", filters] as const,
+    application: ["seller", "application"] as const,
+    profile: ["seller", "profile"] as const,
+  },
+  wallet: ["wallet"] as const,
+  walletTransactions: (filters: Filters) =>
+    ["wallet", "transactions", filters] as const,
+  bankAccounts: ["wallet", "bank-accounts"] as const,
+  payouts: (filters: Filters) => ["wallet", "payouts", filters] as const,
+  admin: {
+    sellers: (filters: Filters) => ["admin", "sellers", filters] as const,
+    products: (filters: Filters) => ["admin", "products", filters] as const,
+    commissions: (filters: Filters) => ["admin", "commissions", filters] as const,
+    payouts: (filters: Filters) => ["admin", "payouts", filters] as const,
+    refunds: (filters: Filters) => ["admin", "refunds", filters] as const,
+    orders: (filters: Filters) => ["admin", "orders", filters] as const,
+    payments: (filters: Filters) => ["admin", "payments", filters] as const,
+    auditLogs: (filters: Filters) => ["admin", "audit-logs", filters] as const,
+    vouchers: (filters: Filters) => ["admin", "vouchers", filters] as const,
+    categories: (filters: Filters) => ["admin", "categories", filters] as const,
+    reviews: (filters: Filters) => ["admin", "reviews", filters] as const,
+    users: (filters: Filters) => ["admin", "users", filters] as const,
+  },
+} as const;

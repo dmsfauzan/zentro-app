@@ -1,0 +1,21 @@
+# ZENTRO — root-level ignores
+# (backend/ dan frontend/ punya .gitignore masing-masing)
+
+# Rahasia & konfigurasi lokal
+.env
+.env.local
+.env.*.local
+*.pem
+
+# Hasil backup/restore (scripts/backup.ps1)
+backups/
+
+# Arsip besar & snapshot lokal (tidak untuk repo)
+docs.zip
+dump.rdb
+
+# Artefak OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

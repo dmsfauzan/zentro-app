@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="750" viewBox="0 0 600 750">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0062D1"/>
+      <stop offset="1" stop-color="#35A3FF"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="750" fill="url(#g)"/>
+  <circle cx="520" cy="110" r="190" fill="#ffffff" opacity="0.07"/>
+  <circle cx="70" cy="700" r="160" fill="#ffffff" opacity="0.05"/>
+  <text x="520" y="405" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="360" font-weight="700" fill="#ffffff" opacity="0.14">T</text>
+  <text x="60" y="110" font-family="Arial, Helvetica, sans-serif" font-size="22" letter-spacing="4" fill="#ffffff" opacity="0.8">FASHION</text>
+  <text font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="700" fill="#ffffff"><tspan x="60" y="520">Tote Bag Kanvas</tspan></text>
+  <text x="60" y="702" font-family="Arial, Helvetica, sans-serif" font-size="20" letter-spacing="5" fill="#ffffff" opacity="0.75">ZENTRO</text>
+</svg>
