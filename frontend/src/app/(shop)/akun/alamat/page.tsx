@@ -7,6 +7,7 @@ import { Card, CardBody } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Field, Input } from "@/components/ui/Input";
 import { Icon } from "@/components/ui/Icon";
+import { RegionFields } from "@/components/region/RegionFields";
 import { Modal } from "@/components/ui/Modal";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Alert } from "@/components/ui/Alert";
@@ -208,25 +209,10 @@ export default function AddressesPage() {
           <Field label="Alamat" htmlFor="address_line" required>
             <Input id="address_line" value={form.address_line} onChange={(event) => setForm({ ...form, address_line: event.target.value })} />
           </Field>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Provinsi" htmlFor="province" required>
-              <Input id="province" value={form.province} onChange={(event) => setForm({ ...form, province: event.target.value })} />
-            </Field>
-            <Field label="Kota" htmlFor="city" required>
-              <Input id="city" value={form.city} onChange={(event) => setForm({ ...form, city: event.target.value })} />
-            </Field>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <Field label="Kecamatan" htmlFor="district">
-              <Input id="district" value={form.district ?? ""} onChange={(event) => setForm({ ...form, district: event.target.value })} />
-            </Field>
-            <Field label="Kelurahan" htmlFor="village">
-              <Input id="village" value={form.village ?? ""} onChange={(event) => setForm({ ...form, village: event.target.value })} />
-            </Field>
-            <Field label="Kode pos" htmlFor="postal_code" required>
-              <Input id="postal_code" value={form.postal_code} onChange={(event) => setForm({ ...form, postal_code: event.target.value })} />
-            </Field>
-          </div>
+          <RegionFields
+            value={form}
+            onChange={(region) => setForm({ ...form, ...region })}
+          />
           <label className="flex items-center gap-2 text-sm text-ink">
             <input
               type="checkbox"

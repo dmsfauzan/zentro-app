@@ -47,6 +47,12 @@ final class MidtransGateway implements PaymentGatewayInterface
     ];
 
     /**
+     * Midtrans mengirim waktu dalam WIB tanpa offset (mis. `2026-11-21 14:08:10`).
+     * Tanpa zona eksplisit, Carbon akan membacanya sebagai UTC dan menggeser jam +7.
+     */
+    private const PROVIDER_TIMEZONE = 'Asia/Jakarta';
+
+    /**
      * @param  array<string, mixed>  $config
      */
     public function __construct(
@@ -118,7 +124,7 @@ final class MidtransGateway implements PaymentGatewayInterface
             redirectUrl: isset($data['redirect_url']) ? (string) $data['redirect_url'] : null,
             vaNumber: $this->firstVaNumber($data),
             expiresAt: isset($data['expiry_time'])
-                ? Carbon::parse((string) $data['expiry_time'])
+                ? Carbon::parse((string) $data['expiry_time'], self::PROVIDER_TIMEZONE)
                 : $payment->expires_at,
             rawPayload: array_filter([
                 'order_id' => $order->order_number,
@@ -355,7 +361,7 @@ final class MidtransGateway implements PaymentGatewayInterface
             providerReference: (string) ($data['transaction_id'] ?? $orderNumber),
             method: isset($data['payment_type']) ? (string) $data['payment_type'] : null,
             paidAt: $status === PaymentStatus::Paid
-                ? Carbon::parse($data['settlement_time'] ?? now())
+                ? Carbon::parse($data['settlement_time'] ?? now(), self::PROVIDER_TIMEZONE)
                 : null,
             rawPayload: $data,
         );
@@ -426,7 +432,9 @@ final class MidtransGateway implements PaymentGatewayInterface
             amount: (int) round((float) ($payload['gross_amount'] ?? 0)),
             providerReference: $transactionId !== '' ? $transactionId : $orderNumber,
             method: isset($payload['payment_type']) ? (string) $payload['payment_type'] : null,
-            paidAt: $status === PaymentStatus::Paid ? Carbon::now() : null,
+            paidAt: $status === PaymentStatus::Paid
+                ? Carbon::parse($payload['settlement_time'] ?? now(), self::PROVIDER_TIMEZONE)
+                : null,
             rawPayload: $payload,
         );
     }

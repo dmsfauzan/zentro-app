@@ -13,6 +13,8 @@ backups/
 # Arsip besar & snapshot lokal (tidak untuk repo)
 docs.zip
 dump.rdb
+*-backend.zip
+backend.zip
 
 # Artefak OS/editor
 .DS_Store

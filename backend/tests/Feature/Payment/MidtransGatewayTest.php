@@ -253,7 +253,8 @@ it('maps a settlement status to paid', function (): void {
 
     expect($result->status)->toBe(PaymentStatus::Paid)
         ->and($result->providerReference)->toBe('tx-123')
-        ->and($result->method)->toBe('qris');
+        ->and($result->method)->toBe('qris')
+        ->and($result->paidAt?->format('H:i'))->toBe('10:00');
 });
 
 it('verifies the sha512 webhook signature with the signature key', function (): void {

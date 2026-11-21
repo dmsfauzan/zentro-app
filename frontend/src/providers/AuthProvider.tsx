@@ -31,6 +31,7 @@ interface AuthContextValue {
   loginFirebase: (email: string, password: string) => Promise<void>;
   registerFirebase: (name: string, email: string, password: string) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
   logout: () => void;
   refresh: () => Promise<void>;
   can: (permission: string) => boolean;
@@ -182,6 +183,56 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await sendPasswordResetEmail(auth, email);
   }, []);
 
+  const changePassword = useCallback(
+    async (currentPassword: string, newPassword: string) => {
+      const auth = await getFirebaseAuth();
+
+      if (!auth) throw new Error("Firebase belum dikonfigurasi.");
+
+      const currentUser = auth.currentUser;
+
+      if (!currentUser?.email) {
+        throw new Error(
+          "Sesi kata sandi tidak tersedia. Masuk ulang dengan email dan kata sandi.",
+        );
+      }
+
+      const { EmailAuthProvider, reauthenticateWithCredential, updatePassword } =
+        await import("firebase/auth");
+
+      try {
+        // Firebase mewajibkan autentikasi ulang sebelum mengganti kata sandi.
+        const credential = EmailAuthProvider.credential(
+          currentUser.email,
+          currentPassword,
+        );
+        await reauthenticateWithCredential(currentUser, credential);
+        await updatePassword(currentUser, newPassword);
+      } catch (error) {
+        const code = (error as { code?: string }).code;
+
+        if (code === "auth/wrong-password" || code === "auth/invalid-credential") {
+          throw new Error("Kata sandi saat ini salah.");
+        }
+
+        if (code === "auth/weak-password") {
+          throw new Error("Kata sandi baru terlalu lemah.");
+        }
+
+        if (code === "auth/requires-recent-login") {
+          throw new Error("Sesi sudah lama. Masuk ulang lalu coba lagi.");
+        }
+
+        if (code === "auth/too-many-requests") {
+          throw new Error("Terlalu banyak percobaan. Coba lagi beberapa saat lagi.");
+        }
+
+        throw error;
+      }
+    },
+    [],
+  );
+
   const logout = useCallback(() => {
     void (async () => {
       const auth = await getFirebaseAuth();
@@ -220,6 +271,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loginFirebase,
       registerFirebase,
       resetPassword,
+      changePassword,
       logout,
       refresh,
       can,
@@ -232,6 +284,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loginFirebase,
       registerFirebase,
       resetPassword,
+      changePassword,
       logout,
       refresh,
       can,

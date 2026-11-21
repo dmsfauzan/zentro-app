@@ -20,6 +20,10 @@ Route::middleware('auth.firebase')->group(function () {
         ->middleware('throttle:payment-retry')
         ->name('orders.payment.retry');
 
+    Route::post('orders/{order:order_number}/payment/sync', [PaymentController::class, 'sync'])
+        ->middleware('throttle:payment-sync')
+        ->name('orders.payment.sync');
+
     Route::get('admin/payments', [AdminPaymentController::class, 'index'])
         ->middleware('can:manage_payments')
         ->name('admin.payments.index');

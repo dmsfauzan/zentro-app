@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { StatusBadge } from "@/components/ui/Badge";
 import { Money } from "@/components/ui/Money";
 import { Icon } from "@/components/ui/Icon";
-import { useOrders } from "@/features/orders";
+import { useOrders, usePendingPaymentsSync } from "@/features/orders";
 import { useUrlFilters } from "@/lib/use-url-filters";
 import { formatDateTime } from "@/lib/format";
 import { cn } from "@/lib/cn";
@@ -31,6 +31,13 @@ export default function OrdersPage() {
 
   const items = orders.data?.items ?? [];
   const pagination = orders.data?.pagination;
+
+  const pendingOrderNumbers = items
+    .filter((order) => order.status === "pending_payment")
+    .map((order) => order.order_number);
+
+  // Tarik status pembayaran terbaru dari provider untuk pesanan yang menunggu.
+  usePendingPaymentsSync(pendingOrderNumbers);
 
   return (
     <div className="container-page py-8">
@@ -57,6 +64,12 @@ export default function OrdersPage() {
           );
         })}
       </div>
+
+      {pendingOrderNumbers.length > 0 ? (
+        <p className="mt-2 text-xs text-ink-subtle" aria-live="polite">
+          Status pembayaran yang menunggu diperiksa otomatis.
+        </p>
+      ) : null}
 
       {orders.isPending ? (
         <div className="mt-5 space-y-3">

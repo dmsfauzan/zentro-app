@@ -201,8 +201,7 @@ export default function InvoicePage() {
           <p className="font-medium text-ink">Pembayaran</p>
           {data.payment ? (
             <p className="mt-1 text-ink-muted">
-              {data.payment.provider}
-              {data.payment.method ? ` · ${data.payment.method}` : ""} · {data.payment.status}
+              {data.payment.method === "bca_va" ? "BCA Virtual Account" : data.payment.method}
               {data.payment.paid_at ? ` · ${formatDateTime(data.payment.paid_at)}` : ""}
             </p>
           ) : (

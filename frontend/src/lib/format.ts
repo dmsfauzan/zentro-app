@@ -17,21 +17,26 @@ export function formatNumber(value: number): string {
   return new Intl.NumberFormat("id-ID").format(value);
 }
 
+/** ZENTRO menampilkan semua waktu dalam WIB, apa pun zona waktu perangkat. */
+const JAKARTA_TIME_ZONE = "Asia/Jakarta";
+
 export function formatDateTime(value: string | Date | null): string {
   if (!value) return "-";
 
   return new Intl.DateTimeFormat("id-ID", {
     dateStyle: "medium",
     timeStyle: "short",
+    timeZone: JAKARTA_TIME_ZONE,
   }).format(new Date(value));
 }
 
 export function formatDate(value: string | Date | null): string {
   if (!value) return "-";
 
-  return new Intl.DateTimeFormat("id-ID", { dateStyle: "medium" }).format(
-    new Date(value),
-  );
+  return new Intl.DateTimeFormat("id-ID", {
+    dateStyle: "medium",
+    timeZone: JAKARTA_TIME_ZONE,
+  }).format(new Date(value));
 }
 
 export function maskAccountNumber(value: string | null): string {

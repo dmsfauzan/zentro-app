@@ -337,6 +337,15 @@ export interface OrderDetail extends OrderSummary {
   }[];
 }
 
+export interface RegionOption {
+  code: string;
+  name: string;
+}
+
+export interface RegionVillageOption extends RegionOption {
+  postal_code: string | null;
+}
+
 export interface UserAddress {
   id: number;
   label: string | null;

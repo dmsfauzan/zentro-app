@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { Field, Input, Select, Textarea } from "@/components/ui/Input";
 import { Icon } from "@/components/ui/Icon";
+import { RegionFields } from "@/components/region/RegionFields";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { StatusBadge } from "@/components/ui/Badge";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -216,24 +217,20 @@ export default function OnboardingPage() {
                   <Input id="address_line" value={form.address_line} onChange={(event) => setForm({ ...form, address_line: event.target.value })} required />
                 </Field>
               </div>
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                <Field label="Provinsi" htmlFor="province" required>
-                  <Input id="province" value={form.province} onChange={(event) => setForm({ ...form, province: event.target.value })} required />
-                </Field>
-                <Field label="Kota" htmlFor="city" required>
-                  <Input id="city" value={form.city} onChange={(event) => setForm({ ...form, city: event.target.value })} required />
-                </Field>
-              </div>
-              <div className="mt-3 grid gap-3 sm:grid-cols-3">
-                <Field label="Kecamatan" htmlFor="district">
-                  <Input id="district" value={form.district} onChange={(event) => setForm({ ...form, district: event.target.value })} />
-                </Field>
-                <Field label="Kelurahan" htmlFor="village">
-                  <Input id="village" value={form.village} onChange={(event) => setForm({ ...form, village: event.target.value })} />
-                </Field>
-                <Field label="Kode pos" htmlFor="postal_code" required>
-                  <Input id="postal_code" value={form.postal_code} onChange={(event) => setForm({ ...form, postal_code: event.target.value })} required />
-                </Field>
+              <div className="mt-3">
+                <RegionFields
+                  value={form}
+                  onChange={(region) =>
+                    setForm({
+                      ...form,
+                      province: region.province,
+                      city: region.city,
+                      district: region.district ?? "",
+                      village: region.village ?? "",
+                      postal_code: region.postal_code,
+                    })
+                  }
+                />
               </div>
             </div>
 

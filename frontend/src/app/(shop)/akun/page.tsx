@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { MapPin } from "lucide-react";
 import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
@@ -10,12 +11,17 @@ import { Icon } from "@/components/ui/Icon";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useMe, useUpdateMe } from "@/features/account";
 import { useToast } from "@/providers/ToastProvider";
+import { useAuth } from "@/providers/AuthProvider";
 import { errorMessage } from "@/lib/api/client";
+import { isFirebaseConfigured } from "@/lib/config";
 
 export default function AccountPage() {
   const me = useMe();
   const update = useUpdateMe();
   const toast = useToast();
+  const { changePassword } = useAuth();
+  const [passwordBusy, setPasswordBusy] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   if (me.isPending) {
     return <div className="container-page py-8"><Skeleton className="h-64 w-full" /></div>;
@@ -87,6 +93,86 @@ export default function AccountPage() {
               </div>
             </CardBody>
           </Card>
+
+          {isFirebaseConfigured ? (
+            <Card>
+              <CardHeader
+                title="Keamanan"
+                description="Ganti kata sandi akun email kamu."
+              />
+              <CardBody>
+                {passwordError ? (
+                  <Alert tone="danger" title="Gagal mengganti kata sandi">
+                    {passwordError}
+                  </Alert>
+                ) : null}
+                <form
+                  className="space-y-4"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    const form = event.currentTarget;
+                    const data = new FormData(form);
+                    const currentPassword = String(data.get("currentPassword") ?? "");
+                    const newPassword = String(data.get("newPassword") ?? "");
+                    const confirmation = String(data.get("confirmation") ?? "");
+
+                    if (newPassword.length < 6) {
+                      setPasswordError("Kata sandi baru minimal 6 karakter.");
+                      return;
+                    }
+
+                    if (newPassword !== confirmation) {
+                      setPasswordError("Konfirmasi kata sandi tidak cocok.");
+                      return;
+                    }
+
+                    setPasswordBusy(true);
+                    setPasswordError(null);
+                    void changePassword(currentPassword, newPassword)
+                      .then(() => {
+                        form.reset();
+                        toast.success("Kata sandi berhasil diganti");
+                      })
+                      .catch((caught) => setPasswordError(errorMessage(caught)))
+                      .finally(() => setPasswordBusy(false));
+                  }}
+                >
+                  <Field label="Kata sandi saat ini" htmlFor="currentPassword">
+                    <Input
+                      id="currentPassword"
+                      name="currentPassword"
+                      type="password"
+                      autoComplete="current-password"
+                      required
+                    />
+                  </Field>
+                  <Field label="Kata sandi baru" htmlFor="newPassword" hint="Minimal 6 karakter.">
+                    <Input
+                      id="newPassword"
+                      name="newPassword"
+                      type="password"
+                      autoComplete="new-password"
+                      minLength={6}
+                      required
+                    />
+                  </Field>
+                  <Field label="Konfirmasi kata sandi" htmlFor="confirmation">
+                    <Input
+                      id="confirmation"
+                      name="confirmation"
+                      type="password"
+                      autoComplete="new-password"
+                      minLength={6}
+                      required
+                    />
+                  </Field>
+                  <Button type="submit" loading={passwordBusy}>
+                    Ganti kata sandi
+                  </Button>
+                </form>
+              </CardBody>
+            </Card>
+          ) : null}
 
           <Card>
             <CardHeader title="Alamat" />

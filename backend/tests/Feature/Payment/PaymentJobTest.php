@@ -1,12 +1,11 @@
 <?php
 
-use App\Contracts\Payment\PaymentGatewayInterface;
 use App\Enums\PaymentStatus;
 use App\Infrastructure\Payment\FakePaymentGateway;
 use App\Jobs\ExpirePaymentsJob;
 use App\Jobs\ReconcilePaymentsJob;
 use App\Modules\Inventory\Models\InventoryMovement;
-use App\Modules\Payment\Actions\MarkPaymentPaidAction;
+use App\Modules\Payment\Actions\SyncPaymentStatusAction;
 
 beforeEach(function (): void {
     FakePaymentGateway::reset();
@@ -47,10 +46,7 @@ it('reconciles a settlement reported by the provider when the webhook never arri
 
     FakePaymentGateway::simulateProviderStatus($order->order_number, PaymentStatus::Paid);
 
-    app()->make(ReconcilePaymentsJob::class)->handle(
-        app(PaymentGatewayInterface::class),
-        app(MarkPaymentPaidAction::class),
-    );
+    app()->make(ReconcilePaymentsJob::class)->handle(app(SyncPaymentStatusAction::class));
 
     expect($order->refresh()->status->value)->toBe('paid')
         ->and($order->payment()->firstOrFail()->status)->toBe(PaymentStatus::Paid)
@@ -63,10 +59,7 @@ it('reconciles an expired payment reported by the provider', function (): void {
 
     FakePaymentGateway::simulateProviderStatus($order->order_number, PaymentStatus::Expired);
 
-    app()->make(ReconcilePaymentsJob::class)->handle(
-        app(PaymentGatewayInterface::class),
-        app(MarkPaymentPaidAction::class),
-    );
+    app()->make(ReconcilePaymentsJob::class)->handle(app(SyncPaymentStatusAction::class));
 
     expect($order->payment()->firstOrFail()->status)->toBe(PaymentStatus::Expired);
 });
@@ -83,10 +76,7 @@ it('is idempotent when reconciliation runs after the webhook already paid the or
 
     FakePaymentGateway::simulateProviderStatus($order->order_number, PaymentStatus::Paid);
 
-    app()->make(ReconcilePaymentsJob::class)->handle(
-        app(PaymentGatewayInterface::class),
-        app(MarkPaymentPaidAction::class),
-    );
+    app()->make(ReconcilePaymentsJob::class)->handle(app(SyncPaymentStatusAction::class));
 
     expect(InventoryMovement::query()
         ->where('type', 'commit')

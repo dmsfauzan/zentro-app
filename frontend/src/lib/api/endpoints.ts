@@ -11,10 +11,19 @@ export const endpoints = {
     create: "/me/addresses",
     detail: (id: number) => `/me/addresses/${id}`,
   },
+  regions: {
+    provinces: "/regions/provinces",
+    regencies: "/regions/regencies",
+    districts: "/regions/districts",
+    villages: "/regions/villages",
+  },
   catalog: {
     categories: "/categories",
     products: "/products",
     product: (slug: string) => `/products/${slug}`,
+  },
+  assistant: {
+    chat: "/assistant/chat",
   },
   cart: {
     root: "/cart",
@@ -36,6 +45,7 @@ export const endpoints = {
   },
   payment: {
     status: (orderNumber: string) => `/orders/${orderNumber}/payment`,
+    sync: (orderNumber: string) => `/orders/${orderNumber}/payment/sync`,
     retry: (orderNumber: string) => `/orders/${orderNumber}/payment/retry`,
     devSimulate: (orderNumber: string) => `/dev/payments/${orderNumber}/simulate`,
   },

@@ -78,12 +78,21 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(10)->by($request->ip());
         });
 
+        RateLimiter::for('assistant', function (Request $request): Limit {
+            return Limit::perMinute(20)->by($request->user()?->getKey() ?? $request->ip());
+        });
+
         RateLimiter::for('checkout', function (Request $request): Limit {
             return Limit::perMinute(10)->by($request->user()?->getKey() ?? $request->ip());
         });
 
         RateLimiter::for('payment-retry', function (Request $request): Limit {
             return Limit::perMinute(10)->by($request->user()?->getKey() ?? $request->ip());
+        });
+
+        // Polling status pembayaran (halaman pembayaran/detail/daftar pesanan).
+        RateLimiter::for('payment-sync', function (Request $request): Limit {
+            return Limit::perMinute(30)->by($request->user()?->getKey() ?? $request->ip());
         });
 
         RateLimiter::for('webhook', function (Request $request): Limit {

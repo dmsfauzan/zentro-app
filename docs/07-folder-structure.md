@@ -43,6 +43,7 @@ backend/
 │  │  ├─ Promotion/
 │  │  ├─ Review/
 │  │  ├─ Notification/
+│  │  ├─ Region/                      # Direktori wilayah (provinsi → kelurahan)
 │  │  └─ Platform/
 │  │
 │  ├─ Support/                        # Building blocks lintas modul

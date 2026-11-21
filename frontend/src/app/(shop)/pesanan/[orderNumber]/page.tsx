@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { MapPin, Star, Truck } from "lucide-react";
+import { MapPin, RefreshCw, Star, Truck } from "lucide-react";
 import { Alert } from "@/components/ui/Alert";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
@@ -14,7 +14,14 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { StatusBadge } from "@/components/ui/Badge";
 import { Textarea } from "@/components/ui/Input";
 import { ReviewDialog } from "@/components/shop/ReviewDialog";
-import { useCancelOrder, useConfirmReceived, useOrder, useOrderRefunds, useRequestRefund } from "@/features/orders";
+import {
+  useCancelOrder,
+  useConfirmReceived,
+  useOrder,
+  useOrderRefunds,
+  usePaymentSync,
+  useRequestRefund,
+} from "@/features/orders";
 import { useAuth } from "@/providers/AuthProvider";
 import { useToast } from "@/providers/ToastProvider";
 import { errorMessage } from "@/lib/api/client";
@@ -30,6 +37,8 @@ export default function OrderDetailPage() {
   const confirmReceived = useConfirmReceived(orderNumber);
   const refunds = useOrderRefunds(orderNumber);
   const requestRefund = useRequestRefund(orderNumber);
+  // Selama menunggu bayar, status ditarik dari provider secara berkala.
+  const autoSync = usePaymentSync(orderNumber, order.data?.status === "pending_payment");
   const [cancelOpen, setCancelOpen] = useState(false);
   const [reason, setReason] = useState("");
   const [refundTarget, setRefundTarget] = useState<{ id: number; label: string } | null>(null);
@@ -104,6 +113,13 @@ export default function OrderDetailPage() {
           </>
         ) : null}
       </div>
+
+      {canPay && autoSync.dataUpdatedAt > 0 ? (
+        <p className="mt-2 flex items-center gap-1.5 text-xs text-ink-subtle" aria-live="polite">
+          <Icon as={RefreshCw} size="xs" className={autoSync.isFetching ? "animate-spin" : ""} />
+          {autoSync.isFetching ? "Memeriksa status pembayaran..." : "Status pembayaran diperiksa otomatis"}
+        </p>
+      ) : null}
 
       <div className="mt-6 grid gap-6 lg:grid-cols-12">
         <div className="space-y-4 lg:col-span-8">

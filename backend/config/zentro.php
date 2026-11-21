@@ -180,4 +180,25 @@ return [
         'log_channel' => env('OBSERVABILITY_LOG_CHANNEL', 'stack'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Asisten belanja (chatbot)
+    |--------------------------------------------------------------------------
+    |
+    | Endpoint OpenAI-compatible (mis. 9router) dipakai untuk memahami maksud
+    | pesan pembeli. Pencarian produk & penambahan ke keranjang tetap dijalankan
+    | server lewat katalog dan action cart yang sudah ada — asisten tidak pernah
+    | mengubah data transaksi sendiri.
+    |
+    */
+
+    'assistant' => [
+        'enabled' => (bool) env('ASSISTANT_ENABLED', true),
+        'base_url' => env('ASSISTANT_BASE_URL', 'http://localhost:20128/v1'),
+        'api_key' => env('ASSISTANT_API_KEY'),
+        'model' => env('ASSISTANT_MODEL', 'assist'),
+        'timeout' => (int) env('ASSISTANT_TIMEOUT_SECONDS', 25),
+        'max_products' => (int) env('ASSISTANT_MAX_PRODUCTS', 6),
+    ],
+
 ];

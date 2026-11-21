@@ -47,7 +47,9 @@ export function SellerShell({ children }: { children: ReactNode }) {
   if (loading) return <PageLoader />;
   if (!user) return null;
 
-  if (!isSeller) {
+  // Halaman onboarding harus bisa dibuka oleh akun yang belum memiliki toko.
+  // Halaman seller lainnya tetap dilindungi oleh guard ini.
+  if (!isSeller && pathname !== "/seller/onboarding") {
     return (
       <div className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center gap-3 px-6 text-center">
         <Icon as={Store} size="xl" className="text-ink-subtle" />
@@ -65,21 +67,35 @@ export function SellerShell({ children }: { children: ReactNode }) {
     );
   }
 
+  const header = (
+    <header className="sticky top-0 z-30 border-b border-line bg-paper/95">
+      <div className="container-page flex h-16 items-center gap-4">
+        <Link href="/" aria-label="ZENTRO">
+          <Logo heightClass="h-7" />
+        </Link>
+        <span className="hidden h-5 w-px bg-line sm:block" />
+        <span className="hidden text-sm font-medium text-ink sm:block">Penjual</span>
+        <div className="ml-auto flex items-center gap-2">
+          <NotificationBell />
+          <UserMenu />
+        </div>
+      </div>
+    </header>
+  );
+
+  // Belum punya toko (sedang onboarding): tanpa sidebar navigasi penjual.
+  if (!isSeller) {
+    return (
+      <div className="min-h-screen bg-paper">
+        {header}
+        <main className="container-page py-6">{children}</main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-paper">
-      <header className="sticky top-0 z-30 border-b border-line bg-paper/95">
-        <div className="container-page flex h-16 items-center gap-4">
-          <Link href="/" aria-label="ZENTRO">
-            <Logo heightClass="h-7" />
-          </Link>
-          <span className="hidden h-5 w-px bg-line sm:block" />
-          <span className="hidden text-sm font-medium text-ink sm:block">Penjual</span>
-          <div className="ml-auto flex items-center gap-2">
-            <NotificationBell />
-            <UserMenu />
-          </div>
-        </div>
-      </header>
+      {header}
 
       <div className="container-page flex flex-col gap-6 py-6 lg:flex-row">
         <aside className="lg:w-56 lg:shrink-0">

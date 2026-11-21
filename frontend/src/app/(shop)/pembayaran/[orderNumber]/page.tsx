@@ -16,6 +16,7 @@ import { PaymentMethodPicker } from "@/components/payment/PaymentMethodPicker";
 import {
   useOrder,
   usePayment,
+  usePaymentSync,
   useRetryPayment,
   useSimulatePayment,
 } from "@/features/orders";
@@ -58,6 +59,12 @@ function instructionKind(method: string | null): "qr" | "va" | "bill" | "other" 
   return "other";
 }
 
+function formatClock(timestamp: number): string {
+  return new Intl.DateTimeFormat("id-ID", { timeStyle: "medium" }).format(
+    new Date(timestamp),
+  );
+}
+
 export default function PaymentPage() {
   const { orderNumber } = useParams<{ orderNumber: string }>();
   const router = useRouter();
@@ -69,6 +76,11 @@ export default function PaymentPage() {
   const payment = usePayment(orderNumber);
   const retry = useRetryPayment(orderNumber);
   const simulate = useSimulatePayment(orderNumber);
+  // Sinkronisasi berkala ke provider selama pesanan masih menunggu bayar.
+  const autoSync = usePaymentSync(
+    orderNumber,
+    order.data?.status === "pending_payment" && payment.isSuccess,
+  );
 
   if (order.isPending) {
     return <div className="container-page py-8"><Skeleton className="h-72 w-full" /></div>;
@@ -330,13 +342,14 @@ export default function PaymentPage() {
                         </p>
                       ) : null}
 
-                      <div className="flex flex-wrap gap-2 border-t border-line pt-3">
+                      <div className="flex flex-wrap items-center gap-2 border-t border-line pt-3">
                         <Button
                           variant="secondary"
                           size="sm"
                           onClick={() => {
                             void order.refetch();
                             void payment.refetch();
+                            void autoSync.refetch();
                           }}
                         >
                           <Icon as={RefreshCw} size="xs" />
@@ -350,6 +363,21 @@ export default function PaymentPage() {
                           >
                             Ganti metode
                           </Button>
+                        ) : null}
+                        {autoSync.dataUpdatedAt > 0 ? (
+                          <span
+                            className="ml-auto flex items-center gap-1.5 text-xs text-ink-subtle"
+                            aria-live="polite"
+                          >
+                            <Icon
+                              as={RefreshCw}
+                              size="xs"
+                              className={autoSync.isFetching ? "animate-spin" : ""}
+                            />
+                            {autoSync.isFetching
+                              ? "Memeriksa status..."
+                              : `Diperiksa ${formatClock(autoSync.dataUpdatedAt)}`}
+                          </span>
                         ) : null}
                       </div>
                     </div>
@@ -414,7 +442,9 @@ export default function PaymentPage() {
                 ) : null}
               </div>
               <p className="pt-1 text-xs text-ink-subtle">
-                Status akan diperbarui setelah pembayaran dikonfirmasi.
+                {paid
+                  ? "Pembayaran sudah dikonfirmasi."
+                  : "Status diperiksa otomatis setiap beberapa detik. Kamu juga bisa menekan Cek status."}
               </p>
               <button
                 type="button"

@@ -10,6 +10,12 @@ export const qk = {
   notification: (id: string) => ["notification", id] as const,
   productReviews: (slug: string, page: number) => ["product-reviews", slug, page] as const,
   addresses: ["addresses"] as const,
+  regions: {
+    provinces: ["regions", "provinces"] as const,
+    regencies: (provinceCode: string) => ["regions", "regencies", provinceCode] as const,
+    districts: (regencyCode: string) => ["regions", "districts", regencyCode] as const,
+    villages: (districtCode: string) => ["regions", "villages", districtCode] as const,
+  },
   categories: ["categories"] as const,
   products: (filters: Filters) => ["products", filters] as const,
   product: (slug: string) => ["product", slug] as const,
